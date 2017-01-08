@@ -110,6 +110,10 @@ unless ENV['BEAKER_provision'] == 'no'
   test_zip = File.expand_path(File.join(module_root, 'spec', 'files', 'test-1.0.0.zip'))
   scp_to(default, test_zip, '/tmp/test-1.0.0.zip')
 
+  feature = File.expand_path(File.join(module_root, 'spec', 'files', 'feature.rb'))
+  scp_to(default, feature, '/tmp/feature.rb')
+
+
   # Credit to Puppetlabs Puppet Agent project,
   # This was the only place i could find that had an example that
   # made all of this stuff work.
@@ -137,7 +141,6 @@ unless ENV['BEAKER_provision'] == 'no'
   stop_firewall_on(default)
   clear_ssl
   on(default, 'puppet agent --enable')
-
 end
 
 # Install module
@@ -155,6 +158,11 @@ RSpec.shared_examples 'setup aem' do
       group { \"aem\" : ensure => \"present\" }
 
       user { \"aem\" : ensure => \"present\", gid =>  \"aem\" }
+
+      file { \"/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet/util/feature.rb\" :
+        ensure => file,
+        source => \"/tmp/feature.rb\"
+      }
 
       file { \"/opt/faux\" :
         ensure          => \"directory\",
