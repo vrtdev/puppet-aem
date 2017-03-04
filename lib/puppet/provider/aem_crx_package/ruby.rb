@@ -48,22 +48,19 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     Puppet.debug('aem_crx_package::ruby - Flushing out to AEM.')
     self.class.require_libs
     case @property_flush[:ensure]
-    when :purged
-      if @property_hash[:ensure] == :installed
-        result = uninstall_package
-        raise_on_failure(result)
-      end
-      result = remove_package
-    when :absent
-      result = remove_package
+    when :purged, :absent
+      remove_package
     when :present
-      result = @property_hash[:ensure] == :absent ? upload_package : uninstall_package
+      if @property_hash[:ensure] == :absent
+        upload_package
+      else
+        uninstall_package
+      end
     when :installed
-      result = @property_hash[:ensure] == :absent ? upload_package(true) : install_package
+      install_package
     else
       raise(Puppet::ResourceError, "Unknown property flush value: #{@property_flush[:ensure]}")
     end
-    raise_on_failure(result)
     find_package
     @property_flush.clear
   end
@@ -98,17 +95,15 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     end
 
     config = build_cfg(port, context_root)
-
     @client = CrxPackageManager::DefaultApi.new(CrxPackageManager::ApiClient.new(config))
     @client
   end
 
   def find_package
     client = build_client
-
+    retries = @resource[:retries]
     path = "/etc/packages/#{@resource[:group]}/#{@resource[:pkg]}-.zip"
     begin
-      retries ||= @resource[:retries]
       data = client.list(path: path, include_versions: true)
     rescue CrxPackageManager::ApiError => e
       Puppet.info("Unable to find package for Aem_crx_package[#{@resource[:pkg]}]: #{e}")
@@ -138,25 +133,34 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     found_pkg
   end
 
-  def upload_package(install = false)
+  def upload_package
     client = build_client
     file = File.new(@resource[:source])
-    client.service_post(file, install: install)
+    result = client.service_post(file)
+    raise_on_failure(result)
   end
 
   def install_package
+    upload_package if @property_hash[:ensure] == :absent
     client = build_client
-    client.service_exec('install', @resource[:pkg], @resource[:group], @resource[:version])
+    result = client.service_exec('install', @resource[:pkg], @resource[:group], @resource[:version])
+    raise_on_failure(result)
   end
 
   def uninstall_package
     client = build_client
-    client.service_exec('uninstall', @resource[:pkg], @resource[:group], @resource[:version])
+    result = client.service_exec('uninstall', @resource[:pkg], @resource[:group], @resource[:version])
+    raise_on_failure(result)
   end
 
   def remove_package
+    if @property_hash[:ensure] == :installed && @property_flush[:ensure] == :purged
+      uninstall_package
+    end
+
     client = build_client
-    client.service_exec('delete', @resource[:pkg], @resource[:group], @resource[:version])
+    result = client.service_exec('delete', @resource[:pkg], @resource[:group], @resource[:version])
+    raise_on_failure(result)
   end
 
   def raise_on_failure(api_response)

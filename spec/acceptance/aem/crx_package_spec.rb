@@ -61,7 +61,7 @@ describe 'crx package mgr api', license: false do
 
     on(
       default,
-      puppet("agent #{DEBUG} --detailed-exitcodes --onetime --no-daemonize --verbose  --trace --server #{fqdn}"),
+      puppet("agent #{DEBUG} --detailed-exitcodes --onetime --no-daemonize --verbose --server #{fqdn}"),
       acceptable_exit_codes: [0, 2]
     )
 

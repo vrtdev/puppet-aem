@@ -237,7 +237,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:service_post).with(
-            instance_of(File), install: false
+            instance_of(File)
           ).and_return(service_response)
 
           expect { provider.retrieve }.not_to raise_error
@@ -284,7 +284,13 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:service_post).with(
-            instance_of(File), install: true
+            instance_of(File)
+          ).and_return(service_response)
+
+          expect_any_instance_of(
+            CrxPackageManager::DefaultApi
+          ).to receive(:service_exec).with(
+            'install', 'test', 'my_packages', '1.0.0'
           ).and_return(service_response)
 
           expect { provider.retrieve }.not_to raise_error
@@ -379,7 +385,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: false
+              instance_of(File)
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -425,7 +431,13 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: true
+              instance_of(File)
+            ).and_return(service_response)
+
+            expect_any_instance_of(
+              CrxPackageManager::DefaultApi
+            ).to receive(:service_exec).with(
+              'install', 'test', 'my_packages', '2.0.0'
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -615,7 +627,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: false
+              instance_of(File)
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -661,7 +673,13 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: true
+              instance_of(File)
+            ).and_return(service_response)
+
+            expect_any_instance_of(
+              CrxPackageManager::DefaultApi
+            ).to receive(:service_exec).with(
+              'install', 'test', 'my_packages', '2.0.0'
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -857,7 +875,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: false
+              instance_of(File)
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -903,7 +921,13 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: true
+              instance_of(File)
+            ).and_return(service_response)
+
+            expect_any_instance_of(
+              CrxPackageManager::DefaultApi
+            ).to receive(:service_exec).with(
+              'install', 'test', 'my_packages', '3.0.0'
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -1093,7 +1117,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: false
+              instance_of(File)
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -1139,7 +1163,13 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:service_post).with(
-              instance_of(File), install: true
+              instance_of(File)
+            ).and_return(service_response)
+
+            expect_any_instance_of(
+              CrxPackageManager::DefaultApi
+            ).to receive(:service_exec).with(
+              'install', 'test', 'my_packages', '3.0.0'
             ).and_return(service_response)
 
             expect { provider.retrieve }.not_to raise_error
@@ -1326,7 +1356,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:service_post).with(
-          instance_of(File), install: false
+          instance_of(File)
         ).and_return(service_failure)
 
         expect { provider.retrieve }.not_to raise_error
