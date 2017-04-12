@@ -102,7 +102,7 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
   def find_package
     client = build_client
     retries = @resource[:retries]
-    path = "/etc/packages/#{@resource[:group]}/#{@resource[:pkg]}-.zip"
+    path = "/etc/packages/#{@resource[:group]}/#{@resource[:pkg]}-#{@resource[:version]}.zip"
     begin
       data = client.list(path: path, include_versions: true)
     rescue CrxPackageManager::ApiError => e
@@ -126,7 +126,9 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
 
   def find_version(ary)
     found_pkg = nil
+    Puppet.debug("Looking for package version #{@resource[:version]}")
     ary && ary.each do |p|
+      Puppet.debug("Checking package #{p}")
       found_pkg = p if p.version == @resource[:version]
       break if found_pkg
     end

@@ -57,3 +57,11 @@ Style/WordArray:
     - 'spec/unit/puppet/provider/aem_osgi_config/ruby_spec.rb'
     - 'spec/unit/puppet/provider/aem_sling_resource/ruby_spec.rb'
     - 'spec/unit/puppet/type/aem_sling_resource_spec.rb'
+
+# Don't know why but doing this breaks Puppet's ruby. So don't fail due to it.
+Style/SymbolArray:
+  Enabled: false
+
+# Disable until Ruby 2.3 is default version (don't introduce new dependencies).
+Style/IndentHeredoc:
+  Enabled: false

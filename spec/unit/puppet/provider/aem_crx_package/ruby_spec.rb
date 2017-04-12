@@ -144,7 +144,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-3.0.0.zip',
           include_versions: true
         ).and_return(send(opts[:return_val]))
 
@@ -231,7 +231,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:list).with(
-            path: '/etc/packages/my_packages/test-.zip', include_versions: true
+            path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
           ).and_return(list_missing, list_one_present)
 
           expect_any_instance_of(
@@ -277,7 +277,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:list).with(
-            path: '/etc/packages/my_packages/test-.zip', include_versions: true
+            path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
           ).and_return(list_missing, list_one_installed)
 
           # Should upload file
@@ -332,7 +332,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:list).with(
-            path: '/etc/packages/my_packages/test-.zip', include_versions: true
+            path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
           ).and_return(list_one_present, list_one_installed)
 
           expect_any_instance_of(
@@ -379,7 +379,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_one_present, list_two_present)
 
             expect_any_instance_of(
@@ -425,7 +425,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_one_present, list_two_installed)
 
             expect_any_instance_of(
@@ -479,7 +479,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
             ).and_return(list_one_present, list_missing)
 
             expect_any_instance_of(
@@ -525,7 +525,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
             ).and_return(list_one_present, list_missing)
 
             expect_any_instance_of(
@@ -574,7 +574,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:list).with(
-            path: '/etc/packages/my_packages/test-.zip', include_versions: true
+            path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
           ).and_return(list_one_installed, list_one_present)
 
           expect_any_instance_of(
@@ -621,7 +621,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_one_installed, list_two_present)
 
             expect_any_instance_of(
@@ -667,7 +667,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_one_installed, list_two_installed)
 
             expect_any_instance_of(
@@ -721,7 +721,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
             ).and_return(list_one_installed, list_missing)
 
             expect_any_instance_of(
@@ -773,7 +773,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-1.0.0.zip', include_versions: true
             ).and_return(list_one_installed, list_missing)
 
             expect_any_instance_of(
@@ -822,7 +822,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:list).with(
-            path: '/etc/packages/my_packages/test-.zip', include_versions: true
+            path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
           ).and_return(list_two_present, list_two_installed)
 
           expect_any_instance_of(
@@ -869,7 +869,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-3.0.0.zip', include_versions: true
             ).and_return(list_two_present, list_all_present)
 
             expect_any_instance_of(
@@ -915,7 +915,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-3.0.0.zip', include_versions: true
             ).and_return(list_two_present, list_all_installed)
 
             expect_any_instance_of(
@@ -969,7 +969,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_two_present, list_one_installed)
 
             expect_any_instance_of(
@@ -1015,7 +1015,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_two_present, list_one_installed)
 
             expect_any_instance_of(
@@ -1064,7 +1064,7 @@ PORT=#{opts[:port]}
           expect_any_instance_of(
             CrxPackageManager::DefaultApi
           ).to receive(:list).with(
-            path: '/etc/packages/my_packages/test-.zip', include_versions: true
+            path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
           ).and_return(list_two_installed, list_two_present)
 
           expect_any_instance_of(
@@ -1111,7 +1111,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-3.0.0.zip', include_versions: true
             ).and_return(list_two_installed, list_all_present)
 
             expect_any_instance_of(
@@ -1157,7 +1157,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-3.0.0.zip', include_versions: true
             ).and_return(list_two_installed, list_all_installed)
 
             expect_any_instance_of(
@@ -1211,7 +1211,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_two_installed, list_one_installed)
 
             expect_any_instance_of(
@@ -1263,7 +1263,7 @@ PORT=#{opts[:port]}
             expect_any_instance_of(
               CrxPackageManager::DefaultApi
             ).to receive(:list).with(
-              path: '/etc/packages/my_packages/test-.zip', include_versions: true
+              path: '/etc/packages/my_packages/test-2.0.0.zip', include_versions: true
             ).and_return(list_two_installed, list_one_installed)
 
             expect_any_instance_of(
@@ -1297,7 +1297,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-3.0.0.zip',
           include_versions: true
         ).exactly(11).times.and_raise(CrxPackageManager::ApiError)
 
@@ -1331,7 +1331,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-1.0.0.zip',
           include_versions: true
         ).exactly(2).times.and_raise(CrxPackageManager::ApiError)
 
@@ -1349,7 +1349,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-3.0.0.zip',
           include_versions: true
         ).and_return(list_missing)
 
@@ -1387,7 +1387,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-1.0.0.zip',
           include_versions: true
         ).and_return(list_one_installed)
 
@@ -1425,7 +1425,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-1.0.0.zip',
           include_versions: true
         ).and_return(list_one_installed)
 
@@ -1463,7 +1463,7 @@ PORT=#{opts[:port]}
         expect_any_instance_of(
           CrxPackageManager::DefaultApi
         ).to receive(:list).with(
-          path: '/etc/packages/my_packages/test-.zip',
+          path: '/etc/packages/my_packages/test-1.0.0.zip',
           include_versions: true
         ).and_return(list_one_installed)
 
