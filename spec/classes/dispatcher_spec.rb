@@ -43,7 +43,6 @@ describe 'aem::dispatcher', type: :class do
         'log_file'          => '/var/log/httpd/dispatcher.log',
         'log_level'         => 'warn',
         'module_file'       => '/tmp/dispatcher-apache2.X-4.1.X.so',
-        'no_server_header'  => 'off',
         'pass_error'        => '0',
         'use_processed_url' => 'off',
         'user'              => 'root'
@@ -85,8 +84,6 @@ describe 'aem::dispatcher', type: :class do
         %r|.*DispatcherLog\s*/var/log/httpd/dispatcher.log|
       ).with_content(
         /.*DispatcherLogLevel\s*warn/
-      ).with_content(
-        /.*DispatcherNoServerHeader\s*off/
       ).with_content(
         /.*DispatcherDeclineRoot\s*off/
       ).with_content(
@@ -261,10 +258,16 @@ describe 'aem::dispatcher', type: :class do
           end
           it { is_expected.to compile.with_all_deps }
         end
+        context 'should accept 4' do
+          let(:params) do
+            default_params.merge(log_level: '4')
+          end
+          it { is_expected.to compile.with_all_deps }
+        end
 
         context 'should not accept any other positive value' do
           let(:params) do
-            default_params.merge(log_level: '4')
+            default_params.merge(log_level: '5')
           end
           it { expect { is_expected.to compile }.to raise_error(/smaller or equal/) }
         end
@@ -301,64 +304,18 @@ describe 'aem::dispatcher', type: :class do
           end
           it { is_expected.to compile.with_all_deps }
         end
+        context 'should accept trace' do
+          let(:params) do
+            default_params.merge(log_level: 'trace')
+          end
+          it { is_expected.to compile.with_all_deps }
+        end
 
         context 'should not accept any other value' do
           let(:params) do
             default_params.merge(log_level: 'invalid')
           end
           it { expect { is_expected.to compile }.to raise_error(/not supported for log_level/) }
-        end
-      end
-    end
-
-    context 'no_server_header' do
-      context 'numeric' do
-        context 'should accept 0' do
-          let(:params) do
-            default_params.merge(no_server_header: '0')
-          end
-          it { is_expected.to compile.with_all_deps }
-        end
-        context 'should accept 1' do
-          let(:params) do
-            default_params.merge(no_server_header: '1')
-          end
-          it { is_expected.to compile.with_all_deps }
-        end
-
-        context 'should not accept any other positive value' do
-          let(:params) do
-            default_params.merge(no_server_header: '2')
-          end
-          it { expect { is_expected.to compile }.to raise_error(/smaller or equal/) }
-        end
-        context 'should not accept any negative value' do
-          let(:params) do
-            default_params.merge(no_server_header: '-1')
-          end
-          it { expect { is_expected.to compile }.to raise_error(/greater or equal/) }
-        end
-      end
-
-      context 'on/off' do
-        context 'should accept on' do
-          let(:params) do
-            default_params.merge(no_server_header: 'on')
-          end
-          it { is_expected.to compile.with_all_deps }
-        end
-        context 'should accept off' do
-          let(:params) do
-            default_params.merge(no_server_header: 'off')
-          end
-          it { is_expected.to compile.with_all_deps }
-        end
-
-        context 'should not accept any other value' do
-          let(:params) do
-            default_params.merge(no_server_header: 'invalid')
-          end
-          it { expect { is_expected.to compile }.to raise_error(/not supported for no_server_header/) }
         end
       end
     end
@@ -440,7 +397,6 @@ describe 'aem::dispatcher', type: :class do
         'log_file'          => '/var/log/httpd/dispatcher.log',
         'log_level'         => 'warn',
         'module_file'       => '/tmp/dispatcher-apache2.X-4.1.X.so',
-        'no_server_header'  => 'off',
         'pass_error'        => '0',
         'use_processed_url' => 'off',
         'user'              => 'root'
@@ -482,8 +438,6 @@ describe 'aem::dispatcher', type: :class do
         %r|.*DispatcherLog\s*/var/log/httpd/dispatcher.log|
       ).with_content(
         /.*DispatcherLogLevel\s*warn/
-      ).with_content(
-        /.*DispatcherNoServerHeader\s*off/
       ).with_content(
         /.*DispatcherDeclineRoot\s*off/
       ).with_content(
@@ -552,7 +506,6 @@ describe 'aem::dispatcher', type: :class do
         'log_file'          => '/var/log/httpd/dispatcher.log',
         'log_level'         => 'warn',
         'module_file'       => '/tmp/dispatcher-apache2.X-4.1.X.so',
-        'no_server_header'  => 'off',
         'pass_error'        => '0',
         'use_processed_url' => 'off',
         'user'              => 'root'
