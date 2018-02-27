@@ -23,5 +23,7 @@ TimeoutStopSec=4min
 KillSignal=SIGCONT
 PrivateTmp=<%= @privatetmp %>
 
+LimitNOFILE=65536
+
 [Install]
 WantedBy=multi-user.target
