@@ -14,6 +14,7 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
   def initialize(resource = nil)
     super(resource)
     @property_flush = {}
+    @installed_resource_count = nil
   end
 
   def upload
@@ -45,11 +46,13 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
 
   def flush
     return unless @property_flush[:ensure]
+    need_sleep = false
     Puppet.debug('aem_crx_package::ruby - Flushing out to AEM.')
     self.class.require_libs
     case @property_flush[:ensure]
     when :purged
       if @property_hash[:ensure] == :installed
+        need_sleep = true
         result = uninstall_package
         raise_on_failure(result)
       end
@@ -57,13 +60,19 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     when :absent
       result = remove_package
     when :present
+      need_sleep = true
       result = @property_hash[:ensure] == :absent ? upload_package : uninstall_package
     when :installed
+      need_sleep = true
       result = @property_hash[:ensure] == :absent ? upload_package(true) : install_package
     else
       raise(Puppet::ResourceError, "Unknown property flush value: #{@property_flush[:ensure]}")
     end
     raise_on_failure(result)
+    if need_sleep
+      Puppet.debug("Sleeping 10 seconds to wait for installation to kick in")
+      sleep(10)
+    end
     find_package
     @property_flush.clear
   end
@@ -103,26 +112,26 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     @client
   end
 
-  def wait_for_install_ok
+  def wait_for_osgi_installer_finished
     require 'uri'
     require 'json'
     require 'net/http'
     retries ||= @resource[:retries]
     retry_timeout = @resource[:retry_timeout]
-    host = 'http://localhost:4502'
-    path = '/system/sling/monitoring/mbeans/org/apache/sling/installer/Installer/Sling+OSGi+Installer.json'
+    host = 'http://localhost:8778'
+    path = '/jolokia/read/org.apache.sling.installer:type=Installer,name=*'
     uri = URI.parse(host + path)
     request = Net::HTTP::Get.new(uri)
-    request.basic_auth(@resource[:username], @resource[:password])
     begin
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      Puppet.debug("Starting wait_for_osgi_installer_finished for Aem_crx_package[#{@resource[:pkg]}]")
+      response = Net::HTTP.start(uri.hostname, uri.port) do |http|
         http.request(request)
       end
-      raise "wait_for_install_ok Response '#{response.code}' is not a Net::HTTPSuccess" unless response.is_a?(Net::HTTPSuccess)
+      raise "wait_for_installer_finished Response '#{response.code}' is not a Net::HTTPSuccess" unless response.is_a?(Net::HTTPSuccess)
       data = JSON.parse(response.body)
       check_install_status data
     rescue Errno::EADDRNOTAVAIL, JSON::ParserError, RuntimeError => e
-      Puppet.info("wait_for_install_ok exception for Aem_crx_package[#{@resource[:pkg]}]: #{e.class} : #{e.message} :")
+      Puppet.info("wait_for_installer_finished exception for Aem_crx_package[#{@resource[:pkg]}]: #{e.class} : #{e.message} :")
       will_retry = (retries -= 1) >= 0
       if will_retry
         Puppet.debug("Waiting #{retry_timeout} seconds before retrying installer state query")
@@ -135,17 +144,70 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
   end
 
   def check_install_status(data)
-    if data['Active'] == true || data['ActiveResourceCount'] != 0
+    Puppet.debug("jolokia data: #{data}")
+    unless data.nil? || data['value'].nil?
+      realdata = data['value']['org.apache.sling.installer:name=Sling OSGi Installer,type=Installer']
+    end
+    Puppet.debug("install status: #{realdata}")
+    if realdata.nil?
       @installed_resource_count = nil
-      raise "Active: #{data['Active']} (req: false), ActiveResourceCount: #{data['ActiveResourceCount']} (req: 0)"
-    elsif @installed_resource_count.nil? || @installed_resource_count != data['InstalledResourceCount']
-      @installed_resource_count = data['InstalledResourceCount']
+      raise "Failed to fetch OSGi installer status"
+    elsif realdata['Active'] == true || realdata['ActiveResourceCount'] != 0
+      @installed_resource_count = nil
+      raise "OSGi installer still active, ActiveResourceCount: #{realdata['ActiveResourceCount']}"
+    elsif @installed_resource_count.nil? || @installed_resource_count != realdata['InstalledResourceCount']
+      @installed_resource_count = realdata['InstalledResourceCount']
       raise "Adding timeout to wait for 'InstalledResourceCount' (#{@installed_resource_count}) to stabilise"
     end
   end
 
+  def wait_for_bundles_active
+    require 'uri'
+    require 'json'
+    require 'net/http'
+    retries ||= @resource[:retries]
+    retry_timeout = @resource[:retry_timeout]
+    host = 'http://localhost:4502'
+    path = '/system/console/bundles.json'
+    uri = URI.parse(host + path)
+    request = Net::HTTP::Get.new(uri)
+    request.basic_auth(@resource[:username], @resource[:password])
+    begin
+      Puppet.debug("Starting wait_for_bundles_active for Aem_crx_package[#{@resource[:pkg]}]")
+      response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(request)
+      end
+      raise "wait_for_bundles_active Response '#{response.code}' is not a Net::HTTPSuccess" unless response.is_a?(Net::HTTPSuccess)
+      data = JSON.parse(response.body)
+      check_bundles_status data
+    rescue Errno::EADDRNOTAVAIL, JSON::ParserError, RuntimeError => e
+      Puppet.info("wait_for_bundles_active exception for Aem_crx_package[#{@resource[:pkg]}]: #{e.class} : #{e.message} :")
+      will_retry = (retries -= 1) >= 0
+      if will_retry
+        Puppet.debug("Waiting #{retry_timeout} seconds before retrying bundles state query")
+        sleep retry_timeout
+        Puppet.debug("Retrying bundles state query; remaining retries: #{retries}")
+        retry
+      end
+      raise
+    end
+  end
+
+  def check_bundles_status(data)
+    realdata = data['s']
+    Puppet.debug("bundle status: #{realdata}")
+    if realdata[3] != 0 || realdata[4] != 0
+      raise "OSGi bundles not all active #{realdata[3]} (req: 0) #{realdata[4]} (req: 0)"
+    else
+      Puppet.debug("All OSGi bundles active")
+    end
+  end
+
   def find_package
-    wait_for_install_ok
+    Puppet.debug("Starting find_package for Aem_crx_package[#{@resource[:pkg]}]")
+
+    wait_for_osgi_installer_finished
+    wait_for_bundles_active
     client = build_client
 
     path = "/etc/packages/#{@resource[:group]}/#{@resource[:pkg]}-.zip"
@@ -187,26 +249,24 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
   end
 
   def upload_package(install = false)
-    wait_for_install_ok
     client = build_client
     file = File.new(@resource[:source])
+    Puppet.debug("Starting upload_package for Aem_crx_package[#{@resource[:pkg]}] install: #{install}")
     client.service_post(file, install: install)
   end
 
   def install_package
-    wait_for_install_ok
     client = build_client
+    Puppet.debug("Starting install_package for Aem_crx_package[#{@resource[:pkg]}]")
     client.service_exec('install', @resource[:pkg], @resource[:group], @resource[:version])
   end
 
   def uninstall_package
-    wait_for_install_ok
     client = build_client
     client.service_exec('uninstall', @resource[:pkg], @resource[:group], @resource[:version])
   end
 
   def remove_package
-    wait_for_install_ok
     client = build_client
     client.service_exec('delete', @resource[:pkg], @resource[:group], @resource[:version])
   end
