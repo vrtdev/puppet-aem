@@ -14,7 +14,7 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
   def initialize(resource = nil)
     super(resource)
     @property_flush = {}
-    @installed_resource_count = nil
+    @stabilization_time = nil
   end
 
   def upload
@@ -150,14 +150,14 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     end
     Puppet.debug("install status: #{realdata}")
     if realdata.nil?
-      @installed_resource_count = nil
+      @stabilization_time = @resource[:stabilization_time]
       raise "Failed to fetch OSGi installer status"
     elsif realdata['Active'] == true || realdata['ActiveResourceCount'] != 0
-      @installed_resource_count = nil
+      @stabilization_time = @resource[:stabilization_time]
       raise "OSGi installer still active, ActiveResourceCount: #{realdata['ActiveResourceCount']}"
-    elsif @installed_resource_count.nil? || @installed_resource_count != realdata['InstalledResourceCount']
-      @installed_resource_count = realdata['InstalledResourceCount']
-      raise "Adding timeout to wait for 'InstalledResourceCount' (#{@installed_resource_count}) to stabilise"
+    elsif @stabilization_time > 0
+      @stabilization_time -= @resource[:retry_timeout]
+      raise "Subtracting retry timeout (#{@resource[:retry_timeout]}) from stabilization time: #{@stabilization_time} seconds remaining"
     end
   end
 

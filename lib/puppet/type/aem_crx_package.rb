@@ -100,6 +100,15 @@ This is a private type used to manage CRX Packages via API calls.
     munge(&:to_i)
   end
 
+  newparam(:stabilization_time) do
+    desc 'Number of seconds the installation must have gone quiet (stabilized) before continuing.'
+    newvalues(/^\d+$/)
+
+    defaultto 2
+
+    munge(&:to_i)
+  end
+
   newparam(:source) do
     desc 'The source package file to upload/install.'
   end

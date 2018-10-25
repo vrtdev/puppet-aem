@@ -3,21 +3,22 @@
 # Used to install a CRX Package.
 #
 define aem::crx::package (
-  $ensure          = 'present',
-  $group           = 'aem',
-  $home            = undef,
-  $manage_rubygems = true,
-  $pkg_group       = undef,
-  $pkg_name        = undef,
-  $pkg_version     = undef,
-  $password        = undef,
-  $source          = undef,
-  $timeout         = undef,
-  $type            = undef,
-  $user            = 'aem',
-  $username        = undef,
-  $retries         = undef,
-  $retry_timeout   = undef,
+  $ensure             = 'present',
+  $group              = 'aem',
+  $home               = undef,
+  $manage_rubygems    = true,
+  $pkg_group          = undef,
+  $pkg_name           = undef,
+  $pkg_version        = undef,
+  $password           = undef,
+  $source             = undef,
+  $timeout            = undef,
+  $type               = undef,
+  $user               = 'aem',
+  $username           = undef,
+  $retries            = undef,
+  $retry_timeout      = undef,
+  $stabilization_time = undef,
 ) {
 
   validate_re($ensure, '^(present|installed|absent|purged)$',
@@ -74,17 +75,18 @@ define aem::crx::package (
       }
 
       aem_crx_package { $title :
-        ensure        => $ensure,
-        group         => $pkg_group,
-        home          => $home,
-        password      => $password,
-        pkg           => $pkg_name,
-        source        => $source,
-        username      => $username,
-        version       => $pkg_version,
-        timeout       => $timeout,
-        retries       => $retries,
-        retry_timeout => $retry_timeout
+        ensure             => $ensure,
+        group              => $pkg_group,
+        home               => $home,
+        password           => $password,
+        pkg                => $pkg_name,
+        source             => $source,
+        username           => $username,
+        version            => $pkg_version,
+        timeout            => $timeout,
+        retries            => $retries,
+        retry_timeout      => $retry_timeout,
+        stabilization_time => $stabilization_time,
       }
     }
     'file': {
