@@ -118,7 +118,7 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
     require 'net/http'
     retries ||= @resource[:retries]
     retry_timeout = @resource[:retry_timeout]
-    @stabilization_time = resource[:stabilization_time]
+    @stabilization_time = @resource[:stabilization_time]
     host = 'http://localhost:8778'
     path = '/jolokia/read/org.apache.sling.installer:type=Installer,name=*'
     uri = URI.parse(host + path)
