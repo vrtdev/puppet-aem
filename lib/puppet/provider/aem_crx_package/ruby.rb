@@ -14,7 +14,7 @@ Puppet::Type.type(:aem_crx_package).provide :ruby, parent: Puppet::Provider do
   def initialize(resource = nil)
     super(resource)
     @property_flush = {}
-    @stabilization_time = @resource[:stabilization_time]
+    @stabilization_time = resource[:stabilization_time]
   end
 
   def upload
