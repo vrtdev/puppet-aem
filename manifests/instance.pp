@@ -8,6 +8,7 @@ define aem::instance (
   $context_root            = undef,
   $debug_port              = undef,
   $group                   = 'aem',
+  $gid                     = undef,
   $home                    = undef,
   $jvm_mem_opts            = '-Xmx1024m',
   $jvm_opts                = undef,
@@ -25,6 +26,7 @@ define aem::instance (
   $timeout                 = 600,
   $type                    = author,
   $user                    = 'aem',
+  $uid                     = undef,
   $version                 = undef,
   $systemd_service_options = undef,
 ) {
@@ -51,7 +53,10 @@ define aem::instance (
   validate_bool($manage_group)
 
   if $manage_group {
-    group { $group: ensure => $ensure, }
+    group { $group:
+      ensure => $ensure,
+      gid    => $gid,
+    }
   }
 
   validate_bool($manage_user)
@@ -59,6 +64,7 @@ define aem::instance (
   if $manage_user {
     user { $user:
       ensure => $ensure,
+      uid    => $uid,
       gid    => $group,
     }
   }
