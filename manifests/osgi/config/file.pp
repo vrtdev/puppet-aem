@@ -28,7 +28,7 @@ define aem::osgi::config::file(
     ensure  => $ensure,
     group   => $group,
     content => epp("${module_name}/osgi.config.epp", $file_props),
-    mode    => '0664',
+    mode    => '0660',
     owner   => $user,
   }
 
