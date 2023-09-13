@@ -38,7 +38,9 @@ define aem::dispatcher::farm(
     fail('You must include the aem::dispatcher base class before using any dispatcher class or defined resources')
   }
 
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  }
 
   if $allow_authorized {
     validate_integer($allow_authorized, 1, 0)
@@ -183,8 +185,9 @@ define aem::dispatcher::farm(
       validate_absolute_path($session_management['directory'])
     }
     if has_key($session_management, 'encode') {
-      validate_re($session_management['encode'], '^(md5|hex)$',
-        "${session_management['encode']} is not supported for session_management['encode']. Allowed values are 'md5' and 'hex'.")
+      if $session_management['encode'] =~ /^((?!((^|, )(md5|hex))+$).)*$/ {
+        fail("${session_management['encode']} is not supported for session_management['encode']. Allowed values are 'md5' and 'hex'.")
+      }
     }
     if has_key($session_management, 'timeout') {
       validate_integer($session_management['timeout'], undef, 0)

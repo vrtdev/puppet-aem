@@ -54,9 +54,13 @@ define aem::agent::replication(
   $username              = undef
 ) {
 
-  validate_re($name, '^[A-Za-z0-9\-_]+$', "Name [${name}] must contain only letters, numbers, underscores, or hyphens.")
+  if $name =~ /^((?!((^|, )(^[A-Za-z0-9\-_]+$))+$).)*$/ {
+    fail("Name [${name}] must contain only letters, numbers, underscores, or hyphens.")
+  }
 
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  }
 
   validate_absolute_path($home)
 
@@ -88,8 +92,9 @@ define aem::agent::replication(
 
     validate_bool($enabled)
 
-    validate_re($log_level, '^(debug|info|error)$',
-      "${log_level} is not supported for log_level. Allowed values are 'debug', 'info', and 'error'.")
+    if $log_level =~ /^((?!((^|, )(debug|info|error))+$).)*$/ {
+      fail("${log_level} is not supported for log_level. Allowed values are 'debug', 'info', and 'error'.")
+    }
 
     if $protocol_close_conn {
       validate_bool($protocol_close_conn)
@@ -141,8 +146,9 @@ define aem::agent::replication(
     }
 
     if $trans_ssl {
-      validate_re($trans_ssl, '^(default|relaxed|clientauth)$',
-        "${trans_ssl} is not supported for trans_ssl. Allowed values are 'default', 'relaxed', and 'clientauth'.")
+      if $trans_ssl =~ /^((?!((^|, )(default|relaxed|clientauth))+$).)*$/ {
+        fail("${trans_ssl} is not supported for trans_ssl. Allowed values are 'default', 'relaxed', and 'clientauth'.")
+      }
     }
 
     if $trigger_ignore_def {

@@ -31,7 +31,9 @@ define aem::instance (
 
   anchor { "aem::${name}::begin": }
 
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  }
 
   if $debug_port {
     validate_integer($debug_port)
@@ -80,8 +82,9 @@ define aem::instance (
 
   validate_bool($sample_content)
 
-  validate_re($status, '^(enabled|disabled|running|unmanaged)$',
-    "${status} is not supported for status. Allowed values are 'enabled', 'disabled', 'running' and 'unmanaged'.")
+  if $status =~ /^((?!((^|, )(enabled|disabled|running|unmanaged))+$).)*$/ {
+    fail("${status} is not supported for status. Allowed values are 'enabled', 'disabled', 'running' and 'unmanaged'.")
+  }
 
   validate_integer($snooze)
   if ($ensure == 'present') {
@@ -90,14 +93,14 @@ define aem::instance (
 
   validate_integer($timeout)
 
-  validate_re(
-    $type,
-    '^(author|publish|standby)$',
-    "${type} is not supported for type. Allowed values are 'author', 'publish' and 'standby'."
-  )
+  if $type =~ /^((?!((^|, )(author|publish|standby))+$).)*$/ {
+    fail("${type} is not supported for type. Allowed values are 'author', 'publish' and 'standby'.")
+  }
 
   if $version {
-    validate_re($version, '^\d+\.\d+(\.\d+)?$', "${version} is not a valid version.")
+    if $version =~ /^((?!((^|, )(^\d+\.\d+(\.\d+)?$))+$).)*$/ {
+      fail("${version} is not a valid version.")
+    }
   }
 
   # ### Manage actions

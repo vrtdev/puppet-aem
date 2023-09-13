@@ -15,8 +15,9 @@ define aem::osgi::config(
   $username       = undef,
 ){
 
-  validate_re($ensure, '^(present|absent)$',
-    "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  }
 
   if $ensure == 'present' {
     if $properties == undef {
@@ -30,9 +31,9 @@ define aem::osgi::config(
 
   validate_absolute_path($home)
 
-  validate_re($type, '^(console|file)$',
-    "${type} is not supported for type. Allowed values are 'console' and 'file'.")
-
+  if $type =~ /^((?!((^|, )(console|file))+$).)*$/ {
+    fail("${type} is not supported for type. Allowed values are 'console' and 'file'.")
+  }
 
   if $type == 'console' {
 
@@ -43,8 +44,9 @@ define aem::osgi::config(
       fail("Password must be specified if type == 'console'")
     }
     if $ensure == 'present' {
-      validate_re($handle_missing, '^(merge|remove)$',
-        "${handle_missing} is not supported for handle_missing. Allowed values are 'merge' and 'remove'.")
+      if $handle_missing =~ /^((?!((^|, )(merge|remove))+$).)*$/ {
+        fail("${handle_missing} is not supported for handle_missing. Allowed values are 'merge' and 'remove'.")
+      }
     }
   }
 
