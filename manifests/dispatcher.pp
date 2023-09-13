@@ -2,14 +2,14 @@
 
 class aem::dispatcher (
   Enum['present', 'absent'] $ensure             = 'present',
-  Enum['on', 'off', 1, 0] $decline_root       = $::aem::dispatcher::params::decline_root,
+  Variant[Enum['on', 'off'], Integer[0, 1]] $decline_root       = $::aem::dispatcher::params::decline_root,
   $dispatcher_name    = undef,
   $group              = $::aem::dispatcher::params::group,
   $log_file           = $::aem::dispatcher::params::log_file,
-  Enum['error', 'warn', 'info', 'debug', 'trace', 4, 0] $log_level          = $::aem::dispatcher::params::log_level,
+  Variant[Enum['error', 'warn', 'info', 'debug', 'trace'], Integer[0, 4]] $log_level          = $::aem::dispatcher::params::log_level,
   Stdlib::Absolutepath $module_file = undef,
   $pass_error         = $::aem::dispatcher::params::pass_error,
-  Enum['on', 'off', 1, 0] $use_processed_url  = $::aem::dispatcher::params::use_processed_url,
+  Variant[Enum['on', 'off'], Integer[0, 1]] $use_processed_url  = $::aem::dispatcher::params::use_processed_url,
   $user               = $::aem::dispatcher::params::user
 ) inherits ::aem::dispatcher::params {
 

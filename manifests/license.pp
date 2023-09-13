@@ -4,18 +4,13 @@
 #
 #
 define aem::license (
-  $ensure      = 'present',
+  Enum['present', 'absent'] $ensure      = 'present',
   $customer    = undef,
   $group       = 'aem',
   Stdlib::Absolutepath $home = undef,
   $license_key = undef,
   $user        = 'aem',
   $version     = undef) {
-
-  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
-    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-  }
-
   if $home == undef {
     fail('Home directory must be specified.')
   }

@@ -2,35 +2,35 @@
 #
 # Configure a Dispatcher instance.
 define aem::dispatcher::farm(
-  Enump['present', 'absent'] $ensure              = 'present',
-  Enum[1, 0] $allow_authorized    = undef,
-  Array $allowed_clients     = $::aem::dispatcher::params::allowed_clients,
-  $cache_headers       = undef,
-  $cache_rules         = $::aem::dispatcher::params::cache_rules,
-  Enum[1, 0] $cache_ttl           = undef,
-  $client_headers      = $::aem::dispatcher::params::client_headers,
+  Enum['present', 'absent'] $ensure              = 'present',
+  Optional[Integer[0, 1]] $allow_authorized    = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]] $allowed_clients     = $::aem::dispatcher::params::allowed_clients,
+  Optional[Array[String]] $cache_headers       = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]] $cache_rules         = $::aem::dispatcher::params::cache_rules,
+  Optional[Integer[0, 1]] $cache_ttl           = undef,
+  Variant[Optional[Array[String]], Optional[String]] $client_headers      = $::aem::dispatcher::params::client_headers,
   Stdlib::Absolutepath $docroot = undef,
-  Enum[1, 0] $failover            = undef,
-  $filters             = $::aem::dispatcher::params::filters,
-  Enum[undef, 1] $grace_period        = undef,
-  String $health_check_url    = undef,
-  $ignore_parameters   = undef,
-  $invalidate          = undef,
-  Stdlib::Absolutepath $invalidate_handler = undef,
-  Integer $priority            = $::aem::dispatcher::params::priority,
-  Enum[1, 0] $propagate_synd_post = undef,
-  $renders             = $::aem::dispatcher::params::renders,
-  Enum[undef, 1] $retries             = undef,
-  Enum[undef, 1] $retry_delay         = undef,
-  Enum[1, 0] $serve_stale         = undef,
-  Hash[String, String, String, Integer] $session_management  = undef,
-  Stdlib::Absolutepath $stat_file = undef,
-  Enum[undef, 0] $stat_files_level    = undef,
-  Array $statistics          = undef,
-  Array $sticky_connections  = undef,
-  Enum[undef, 1] $unavailable_penalty = undef,
-  Hash[String, Integer] $vanity_urls         = undef,
-  Array $virtualhosts        = $::aem::dispatcher::params::virtualhosts
+  Optional[Integer[0, 1]] $failover            = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]] $filters             = $::aem::dispatcher::params::filters,
+  Optional[Integer] $grace_period        = undef,
+  Optional[String] $health_check_url    = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]] $ignore_parameters   = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]] $invalidate          = undef,
+  Optional[Stdlib::Absolutepath] $invalidate_handler = undef,
+  Optional[Integer[0, 99]] $priority            = $::aem::dispatcher::params::priority,
+  Optional[Integer[0, 1]] $propagate_synd_post = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]] $renders             = $::aem::dispatcher::params::renders,
+  Optional[Integer] $retries             = undef,
+  Optional[Integer] $retry_delay         = undef,
+  Optional[Integer[0, 1]] $serve_stale         = undef,
+  Optional[Hash] $session_management  = undef,
+  Optional[Stdlib::Absolutepath] $stat_file = undef,
+  Optional[Integer] $stat_files_level    = undef,
+  Variant[Optional[Array[Hash]], Optional[Hash]]  $statistics          = undef,
+  Variant[Optional[Array[String]], Optional[String]] $sticky_connections  = undef,
+  Optional[Integer] $unavailable_penalty = undef,
+  Optional[Hash[String, Variant[String, Integer]]] $vanity_urls         = undef,
+  Variant[Optional[Array[String]], Optional[String]] $virtualhosts        = $::aem::dispatcher::params::virtualhosts
 ) {
 
   # Required dispatcher class because it is used by parameter defaults
@@ -38,66 +38,38 @@ define aem::dispatcher::farm(
     fail('You must include the aem::dispatcher base class before using any dispatcher class or defined resources')
   }
 
-  if $allowed_clients =~ Array {
-    unless $allowed_clients[0] =~ Hash {
-      fail('Allowed clients should be a hash or an array of hashes.')
-    }
+  if $allowed_clients =~ Array[Hash] {
     $_allowed_clients = $allowed_clients
   } else {
-    unless $allowed_clients =~ Hash {
-      fail('Allowed clients should be a hash or an array of hashes.')
-    }
     $_allowed_clients = [$allowed_clients]
   }
 
   if $cache_headers {
-    if is_array($cache_headers) {
-      $_cache_headers = $cache_headers
-    } else {
-      $_cache_headers = [$cache_headers]
-    }
+    $_cache_headers = $cache_headers
   }
 
-  if is_array($cache_rules) {
-    unless $cache_rules[0] =~ Hash {
-      fail('Cache rules should be a hash or an array of hashes.')
-    }
+  if $cache_rules =~ Array[Hash] {
     $_cache_rules = $cache_rules
   } else {
-    unless $cache_rules =~ Hash {
-      fail('Cache rules should be a hash or an array of hashes.')
-    }
     $_cache_rules = [$cache_rules]
   }
 
-  if $client_headers =~ Array {
+  if $client_headers =~ Array[String] {
     $_client_headers = $client_headers
   } else {
     $_client_headers = [$client_headers]
   }
 
-  if $filters =~ Array {
-    unless $filters[0] =~ Hash {
-      fail('Filters should be a hash or an array of hashes.')
-    }
+  if $filters =~ Array[Hash] {
     $_filters = $filters
   } else {
-    unless $filters =~ Hash {
-      fail('Filters should be a hash or an array of hashes.')
-    }
     $_filters = [$filters]
   }
 
   if $ignore_parameters {
-    if $ignore_parameters =~ Array {
-      unless $ignore_parameters[0] =~ Hash {
-        fail('Ignore parameters should be a hash or an array of hashes.')
-      }
+    if $ignore_parameters =~ Array[Hash] {
       $_ignore_parameters = $ignore_parameters
     } else {
-      unless $ignore_parameters =~ Hash {
-        fail('Ignore parameters should be a hash or an array of hashes.')
-      }
       $_ignore_parameters = [$ignore_parameters]
     }
   }
@@ -109,16 +81,9 @@ define aem::dispatcher::farm(
   if $invalidate == undef {
     $_invalidate = $::aem::dispatcher::params::invalidate
   } else {
-
-    if $invalidate =~ Array {
-      unless $invalidate[0] =~ Hash {
-        fail('Invalidate should be a hash or an array of hashes.')
-      }
+    if $invalidate =~ Array[Hash] {
       $_invalidate = $invalidate
     } else {
-      unless $invalidate =~ Hash {
-        fail('Invalidate should be a hash or an array of hashes.')
-      }
       $_invalidate = [$invalidate]
     }
   }
@@ -136,15 +101,9 @@ define aem::dispatcher::farm(
     $priority_string = '00'
   }
 
-  if $renders =~ Array {
-    unless $renders[0] =~ Hash {
-      fail('Renders should be a hash or an array of hashes.')
-    }
+  if $renders =~ Array[Hash] {
     $_renders = $renders
   } else {
-    unless $renders =~ Hash {
-      fail('Renders should be a hash or an array of hashes.')
-    }
     $_renders = [$renders]
   }
 
@@ -167,24 +126,10 @@ define aem::dispatcher::farm(
   }
   
   if $statistics {
-    unless $statistics[0] =~ Hash {
-      fail('Statistics should be a hash or an array of hashes.')
-    }
-    $_statistics = $statistics
-  } else {
-    unless $statistics =~ Hash {
-      fail('Statistics should be a hash or an array of hashes.')
-    }
-    $_statistics = [$statistics]
-  }
-
-  if $sticky_connections {
-    unless $sticky_connections[0] =~ String {
-      fail('Sticky connections should be a string or an array of strings.')
-    }
-  } else {
-    unless $sticky_connections =~ String {
-      fail('Sticky connections should be a string or an array of strings.')
+    if $statistics =~ Array[Hash] {
+      $_statistics = $statistics
+    } else {
+      $_statistics = [$statistics]
     }
   }
 
@@ -198,10 +143,8 @@ define aem::dispatcher::farm(
     }
   }
 
-  if $virtualhosts =~ Array {
+  if $virtualhosts {
     $_virtualhosts = $virtualhosts
-  } else {
-    $_virtualhosts = [$virtualhosts]
   }
 
   if $ensure == 'present' {

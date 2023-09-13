@@ -5,19 +5,19 @@
 # Do not use this defines directly.
 #
 define aem::config(
-  $context_root,
-  $debug_port,
-  $group,
-  $home,
-  $jvm_mem_opts,
-  $jvm_opts,
-  $osgi_configs,
-  $crx_packages,
-  $port,
-  $runmodes,
-  $sample_content,
-  $type,
-  $user
+  Optional[String] $context_root,
+  Optional[Integer] $debug_port,
+  String $group,
+  Stdlib::Absolutepath $home,
+  String $jvm_mem_opts,
+  String $jvm_opts,
+  Variant[Array[Hash], Hash] $osgi_configs,
+  Optional[Array] $crx_packages,
+  Integer $port,
+  Array $runmodes,
+  Boolean $sample_content,
+  Enum['author', 'publish', 'standby'] $type,
+  String $user
 ) {
 
   File {
@@ -56,8 +56,7 @@ define aem::config(
   }
 
   if $osgi_configs {
-
-    if is_array($osgi_configs) {
+    if $osgi_configs =~ Array {
       $_osgi_configs = $osgi_configs
     } else {
       $_osgi_configs = [$osgi_configs]

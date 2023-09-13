@@ -4,36 +4,32 @@
 #
 #
 define aem::instance (
-  $ensure                  = 'present',
-  $context_root            = undef,
-  Variant[Undef, Integer] $debug_port              = undef,
-  $group                   = 'aem',
+  Enum['present', 'absent'] $ensure                  = 'present',
+  Optional[String] $context_root            = undef,
+  Optional[Integer] $debug_port              = undef,
+  String $group                   = 'aem',
   Stdlib::Absolutepath $home                    = undef,
-  $jvm_mem_opts            = '-Xmx1024m',
-  $jvm_opts                = undef,
+  String $jvm_mem_opts            = '-Xmx1024m',
+  String $jvm_opts                = undef,
   Boolean $manage_group            = true,
   Boolean $manage_home             = true,
   Boolean $manage_user             = true,
-  $osgi_configs            = undef,
-  Variant[Undef, Array] $crx_packages            = undef,
+  Variant[Array[Hash], Hash] $osgi_configs            = undef,
+  Optional[Array] $crx_packages            = undef,
   Integer $port                    = 4502,
   Array $runmodes                = [],
   Boolean $sample_content          = true,
   Integer $snooze                  = 10,
   Stdlib::Absolutepath $source                  = undef,
-  $status                  = 'enabled',
+  Enum['enabled', 'disabled', 'running', 'unmanaged'] $status = 'enabled',
   Integer $timeout                 = 600,
-  $type                    = author,
-  $user                    = 'aem',
-  $version                 = undef,
-  $systemd_service_options = undef,
+  Enum['author', 'publish', 'standby'] $type = author,
+  String $user                    = 'aem',
+  Optional[Pattern[/^\d+\.\d+(\.\d+)?$/]] $version = undef,
+  Hash $systemd_service_options = undef,
 ) {
 
   anchor { "aem::${name}::begin": }
-
-  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
-    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-  }
 
   if !$home {
     case $::kernel {
@@ -56,22 +52,8 @@ define aem::instance (
   }
 
   if $osgi_configs {
-    unless $osgi_configs =~ Hash and !(is_array($osgi_configs) and $osgi_configs[0] =~ Hash) {
+    unless $osgi_configs =~ Hash and !($osgi_configs =~ Array and $osgi_configs[0] =~ Hash) {
       fail("Aem::Instance[${name}]: 'osgi_configs' must be either a Hash or an Array of Hashes")
-    }
-  }
-
-  if $status =~ /^((?!((^|, )(enabled|disabled|running|unmanaged))+$).)*$/ {
-    fail("${status} is not supported for status. Allowed values are 'enabled', 'disabled', 'running' and 'unmanaged'.")
-  }
-
-  if $type =~ /^((?!((^|, )(author|publish|standby))+$).)*$/ {
-    fail("${type} is not supported for type. Allowed values are 'author', 'publish' and 'standby'.")
-  }
-
-  if $version {
-    if $version =~ /^((?!((^|, )(^\d+\.\d+(\.\d+)?$))+$).)*$/ {
-      fail("${version} is not a valid version.")
     }
   }
 

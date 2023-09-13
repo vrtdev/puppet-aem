@@ -3,7 +3,7 @@
 # Used to install a CRX Package.
 #
 define aem::crx::package (
-  $ensure             = 'present',
+  Enum['present', 'installed', 'absent', 'purged'] $ensure             = 'present',
   $group              = 'aem',
   Stdlib::Absolutepath $home = undef,
   $manage_rubygems    = true,
@@ -20,11 +20,6 @@ define aem::crx::package (
   $retry_timeout      = undef,
   $stabilization_time = undef,
 ) {
-
-  if $ensure =~ /^((?!((^|, )(present|installed|absent|purged))+$).)*$/ {
-    fail("${ensure} is not supported for ensure. Allowed values are: 'present', 'installed', 'absent' or 'purged'.")
-  }
-
   case $type {
     'api': {
 
