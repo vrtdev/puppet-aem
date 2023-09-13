@@ -12,7 +12,9 @@ define aem::license (
   $user        = 'aem',
   $version     = undef) {
 
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  }
 
   if $home == undef {
     fail('Home directory must be specified.')

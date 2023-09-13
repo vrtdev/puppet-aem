@@ -20,19 +20,24 @@ class aem::dispatcher (
 
   anchor { 'aem::dispatcher::begin': }
 
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+  }
 
   if is_integer($decline_root) {
     validate_integer($decline_root, 1, 0)
   } else {
-    validate_re($decline_root, '^(on|off)$', "${decline_root} is not supported for decline_root. Allowed values are 'on' and 'off'.")
+    if $decline_root =~ /^((?!((^|, )(on|off))+$).)*$/ {
+      fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
+    }
   }
 
   if is_integer($log_level) {
     validate_integer($log_level, 4, 0)
   } else {
-    validate_re($log_level, '^(error|warn|info|debug|trace)$',
-      "${log_level} is not supported for log_level. Allowed values are 'error', 'warn', 'info', 'debug' and 'trace'.")
+    if $log_level =~ /^((?!((^|, )(error|warn|info|debug|trace))+$).)*$/ {
+      fail("${log_level} is not supported for log_level. Allowed values are 'error', 'warn', 'info', 'debug' and 'trace'.")
+    }
   }
 
   validate_absolute_path($module_file)
@@ -41,8 +46,9 @@ class aem::dispatcher (
   if is_integer($use_processed_url) {
     validate_integer($use_processed_url, 1, 0)
   } else {
-    validate_re($use_processed_url, '^(on|off)$',
-      "${use_processed_url} is not supported for use_processed_url. Allowed values are 'on' and 'off'.")
+    if $use_processed_url =~ /^((?!((^|, )(on|off))+$).)*$/ {
+      fail("${use_processed_url} is not supported for use_processed_url. Allowed values are 'on' and 'off'.")
+    }
   }
 
   $config_file = $::aem::dispatcher::params::config_file

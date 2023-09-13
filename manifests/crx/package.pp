@@ -20,8 +20,9 @@ define aem::crx::package (
   $retry_timeout   = undef,
 ) {
 
-  validate_re($ensure, '^(present|installed|absent|purged)$',
-    "${ensure} is not supported for ensure. Allowed values are: 'present', 'installed', 'absent' or 'purged'.")
+  if $ensure =~ /^((?!((^|, )(present|installed|absent|purged))+$).)*$/ {
+    fail("${ensure} is not supported for ensure. Allowed values are: 'present', 'installed', 'absent' or 'purged'.")
+  }
 
   validate_absolute_path($home)
 
