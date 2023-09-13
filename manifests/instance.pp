@@ -6,7 +6,7 @@
 define aem::instance (
   $ensure                  = 'present',
   $context_root            = undef,
-  Integer $debug_port              = undef,
+  Variant[Undef, Integer] $debug_port              = undef,
   $group                   = 'aem',
   Stdlib::Absolutepath $home                    = undef,
   $jvm_mem_opts            = '-Xmx1024m',
@@ -15,7 +15,7 @@ define aem::instance (
   Boolean $manage_home             = true,
   Boolean $manage_user             = true,
   $osgi_configs            = undef,
-  Array $crx_packages            = undef,
+  Variant[Undef, Array] $crx_packages            = undef,
   Integer $port                    = 4502,
   Array $runmodes                = [],
   Boolean $sample_content          = true,
