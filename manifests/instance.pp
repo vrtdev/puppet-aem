@@ -68,7 +68,7 @@ define aem::instance (
   validate_bool($manage_home)
 
   if $osgi_configs {
-    if $osgi_configs != Hash and !(is_array($osgi_configs) and $osgi_configs[0] =~ Hash) {
+    unless $osgi_configs =~ Hash and !(is_array($osgi_configs) and $osgi_configs[0] =~ Hash) {
       fail("Aem::Instance[${name}]: 'osgi_configs' must be either a Hash or an Array of Hashes")
     }
   }
