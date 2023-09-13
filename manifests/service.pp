@@ -7,7 +7,7 @@
 define aem::service (
   $ensure                  = 'present',
   $group                   = 'aem',
-  $home                    = undef,
+  Stdlib::Absolutepath $home = undef,
   $status                  = 'enabled',
   $user                    = 'aem',
   $systemd_service_options = undef,
@@ -16,8 +16,6 @@ define aem::service (
   if $home == undef {
     fail('Home directory must be specified.')
   }
-
-  validate_absolute_path($home)
 
   case $::operatingsystem {
     'CentOS', 'Fedora', 'RedHat' : {

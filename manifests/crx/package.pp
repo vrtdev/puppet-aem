@@ -5,13 +5,13 @@
 define aem::crx::package (
   $ensure             = 'present',
   $group              = 'aem',
-  $home               = undef,
+  Stdlib::Absolutepath $home = undef,
   $manage_rubygems    = true,
   $pkg_group          = undef,
   $pkg_name           = undef,
   $pkg_version        = undef,
   $password           = undef,
-  $source             = undef,
+  Stdlib::Absolutepath $source = undef,
   $timeout            = undef,
   $type               = undef,
   $user               = 'aem',
@@ -23,12 +23,6 @@ define aem::crx::package (
 
   if $ensure =~ /^((?!((^|, )(present|installed|absent|purged))+$).)*$/ {
     fail("${ensure} is not supported for ensure. Allowed values are: 'present', 'installed', 'absent' or 'purged'.")
-  }
-
-  validate_absolute_path($home)
-
-  if $ensure != 'absent' and $ensure != 'purged' {
-    validate_absolute_path($source)
   }
 
   case $type {

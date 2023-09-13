@@ -1,15 +1,15 @@
 # This class exists soley to ensure that the module is properly defined.
 
 class aem::dispatcher (
-  $ensure             = 'present',
-  $decline_root       = $::aem::dispatcher::params::decline_root,
+  Enum['present', 'absent'] $ensure             = 'present',
+  Enum['on', 'off', 1, 0] $decline_root       = $::aem::dispatcher::params::decline_root,
   $dispatcher_name    = undef,
   $group              = $::aem::dispatcher::params::group,
   $log_file           = $::aem::dispatcher::params::log_file,
-  $log_level          = $::aem::dispatcher::params::log_level,
-  $module_file        = undef,
+  Enum['error', 'warn', 'info', 'debug', 'trace', 4, 0] $log_level          = $::aem::dispatcher::params::log_level,
+  Stdlib::Absolutepath $module_file = undef,
   $pass_error         = $::aem::dispatcher::params::pass_error,
-  $use_processed_url  = $::aem::dispatcher::params::use_processed_url,
+  Enum['on', 'off', 1, 0] $use_processed_url  = $::aem::dispatcher::params::use_processed_url,
   $user               = $::aem::dispatcher::params::user
 ) inherits ::aem::dispatcher::params {
 
@@ -20,36 +20,7 @@ class aem::dispatcher (
 
   anchor { 'aem::dispatcher::begin': }
 
-  if $ensure =~ /^((?!((^|, )(present|absent))+$).)*$/ {
-    fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-  }
-
-  if is_integer($decline_root) {
-    validate_integer($decline_root, 1, 0)
-  } else {
-    if $decline_root =~ /^((?!((^|, )(on|off))+$).)*$/ {
-      fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-    }
-  }
-
-  if is_integer($log_level) {
-    validate_integer($log_level, 4, 0)
-  } else {
-    if $log_level =~ /^((?!((^|, )(error|warn|info|debug|trace))+$).)*$/ {
-      fail("${log_level} is not supported for log_level. Allowed values are 'error', 'warn', 'info', 'debug' and 'trace'.")
-    }
-  }
-
-  validate_absolute_path($module_file)
   $_mod_filename = basename($module_file)
-
-  if is_integer($use_processed_url) {
-    validate_integer($use_processed_url, 1, 0)
-  } else {
-    if $use_processed_url =~ /^((?!((^|, )(on|off))+$).)*$/ {
-      fail("${use_processed_url} is not supported for use_processed_url. Allowed values are 'on' and 'off'.")
-    }
-  }
 
   $config_file = $::aem::dispatcher::params::config_file
 

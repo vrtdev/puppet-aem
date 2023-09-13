@@ -6,23 +6,23 @@
 define aem::instance (
   $ensure                  = 'present',
   $context_root            = undef,
-  $debug_port              = undef,
+  Integer $debug_port              = undef,
   $group                   = 'aem',
-  $home                    = undef,
+  Stdlib::Absolutepath $home                    = undef,
   $jvm_mem_opts            = '-Xmx1024m',
   $jvm_opts                = undef,
-  $manage_group            = true,
-  $manage_home             = true,
-  $manage_user             = true,
+  Boolean $manage_group            = true,
+  Boolean $manage_home             = true,
+  Boolean $manage_user             = true,
   $osgi_configs            = undef,
-  $crx_packages            = undef,
-  $port                    = 4502,
-  $runmodes                = [],
-  $sample_content          = true,
-  $snooze                  = 10,
-  $source                  = undef,
+  Array $crx_packages            = undef,
+  Integer $port                    = 4502,
+  Array $runmodes                = [],
+  Boolean $sample_content          = true,
+  Integer $snooze                  = 10,
+  Stdlib::Absolutepath $source                  = undef,
   $status                  = 'enabled',
-  $timeout                 = 600,
+  Integer $timeout                 = 600,
   $type                    = author,
   $user                    = 'aem',
   $version                 = undef,
@@ -35,10 +35,6 @@ define aem::instance (
     fail("${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
   }
 
-  if $debug_port {
-    validate_integer($debug_port)
-  }
-
   if !$home {
     case $::kernel {
       'Linux' : { $_home = '/opt/aem' }
@@ -48,15 +44,9 @@ define aem::instance (
     $_home = $home
   }
 
-  validate_absolute_path($_home)
-
-  validate_bool($manage_group)
-
   if $manage_group {
     group { $group: ensure => $ensure, }
   }
-
-  validate_bool($manage_user)
 
   if $manage_user {
     user { $user:
@@ -65,33 +55,15 @@ define aem::instance (
     }
   }
 
-  validate_bool($manage_home)
-
   if $osgi_configs {
     unless $osgi_configs =~ Hash and !(is_array($osgi_configs) and $osgi_configs[0] =~ Hash) {
       fail("Aem::Instance[${name}]: 'osgi_configs' must be either a Hash or an Array of Hashes")
     }
   }
 
-  if $crx_packages {
-    validate_array($crx_packages)
-  }
-
-  validate_integer($port)
-  validate_array($runmodes)
-
-  validate_bool($sample_content)
-
   if $status =~ /^((?!((^|, )(enabled|disabled|running|unmanaged))+$).)*$/ {
     fail("${status} is not supported for status. Allowed values are 'enabled', 'disabled', 'running' and 'unmanaged'.")
   }
-
-  validate_integer($snooze)
-  if ($ensure == 'present') {
-    validate_absolute_path($source)
-  }
-
-  validate_integer($timeout)
 
   if $type =~ /^((?!((^|, )(author|publish|standby))+$).)*$/ {
     fail("${type} is not supported for type. Allowed values are 'author', 'publish' and 'standby'.")

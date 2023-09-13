@@ -6,7 +6,7 @@ define aem::osgi::config(
   $ensure         = 'present',
   $group          = 'aem',
   $handle_missing = undef,
-  $home           = undef,
+  Stdlib::Absolutepath $home = undef,
   $password       = undef,
   $pid            = undef,
   $properties     = undef,
@@ -28,8 +28,6 @@ define aem::osgi::config(
       fail("Aem::Osgi::Config[${name}]: 'properties' must be a Hash of values")
     }
   }
-
-  validate_absolute_path($home)
 
   if $type =~ /^((?!((^|, )(console|file))+$).)*$/ {
     fail("${type} is not supported for type. Allowed values are 'console' and 'file'.")
