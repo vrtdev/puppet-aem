@@ -24,7 +24,7 @@ define aem::osgi::config(
       fail('Properties must contain at least one entry.')
     }
 
-    if !is_hash($properties) {
+    if $properties != Hash {
       fail("Aem::Osgi::Config[${name}]: 'properties' must be a Hash of values")
     }
   }
