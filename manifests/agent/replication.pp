@@ -14,7 +14,7 @@ define aem::agent::replication(
   Stdlib::Absolutepath $home = undef,
   Enum['debug', 'info', 'error'] $log_level             = 'info',
   Optional[Array] $mixin_types           = undef,
-  $password              = undef,
+  String $password,
   Optional[Boolean] $protocol_close_conn   = undef,
   Optional[Integer] $protocol_conn_timeout = undef,
   Optional[Array] $protocol_http_headers = undef,
@@ -28,14 +28,14 @@ define aem::agent::replication(
   $proxy_password        = undef,
   Optional[Integer] $proxy_port            = undef,
   $proxy_user            = undef,
-  $resource_type         = undef,
+  String $resource_type,
   Optional[Integer] $retry_delay           = undef,
   Optional[Boolean] $reverse               = undef,
-  $runmode               = undef,
-  $serialize_type        = undef,
+  String $runmode,
+  String $serialize_type,
   Optional[Stdlib::Absolutepath] $static_directory = undef,
   $static_definition     = undef,
-  $template              = undef,
+  String $template,
   Optional[Integer] $timeout               = undef,
   Optional[Boolean] $trans_allow_exp_cert  = undef,
   $trans_ntlm_domain     = undef,
@@ -51,39 +51,15 @@ define aem::agent::replication(
   Optional[Boolean] $trigger_on_mod        = undef,
   Optional[Boolean] $trigger_on_receive    = undef,
   Optional[Boolean] $trigger_onoff_time    = undef,
-  $username              = undef
+  String $username
 ) {
 
   if $name =~ /^((?!((^|, )(^[A-Za-z0-9\-_]+$))+$).)*$/ {
     fail("Name [${name}] must contain only letters, numbers, underscores, or hyphens.")
   }
 
-  if $runmode == undef {
-    fail("Parameter 'runmode' must be specified.")
-  }
-
-  if $password == undef {
-    fail("Parameter 'password' must be specified.")
-  }
-  if $username == undef {
-    fail("Parameter 'username' must be specified.")
-  }
-
   if $ensure == 'present' {
-    if !$resource_type {
-      fail("Parameter 'resource_type' must be specified.")
-    }
-
-    if !$serialize_type {
-      fail("Parameter 'serialize_type' must be specified.")
-    }
-
-    if !$template {
-      fail("Parameter 'template' must be specified.")
-    }
-
     $_description = "**Managed by Puppet. Any changes made will be overwritten** ${description}"
-
   } else {
     $_description = undef
   }
