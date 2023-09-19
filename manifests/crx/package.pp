@@ -11,7 +11,7 @@ define aem::crx::package (
   $pkg_name           = undef,
   $pkg_version        = undef,
   $password           = undef,
-  Stdlib::Absolutepath $source = undef,
+  Optional[Stdlib::Absolutepath] $source = undef,
   $timeout            = undef,
   $type               = undef,
   $user               = 'aem',
@@ -20,6 +20,12 @@ define aem::crx::package (
   $retry_timeout      = undef,
   $stabilization_time = undef,
 ) {
+  if $ensure == 'present' or $ensure == 'installed' {
+    if $source == undef {
+      fail("Source is required when ensure == 'present' or ensure == 'installed'")
+    }
+  }
+
   case $type {
     'api': {
 
