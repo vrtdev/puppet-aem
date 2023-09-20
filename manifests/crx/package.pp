@@ -3,15 +3,15 @@
 # Used to install a CRX Package.
 #
 define aem::crx::package (
-  $ensure             = 'present',
+  Enum['present', 'installed', 'absent', 'purged'] $ensure             = 'present',
   $group              = 'aem',
-  $home               = undef,
+  Stdlib::Absolutepath $home = undef,
   $manage_rubygems    = true,
   $pkg_group          = undef,
   $pkg_name           = undef,
   $pkg_version        = undef,
   $password           = undef,
-  $source             = undef,
+  Optional[Stdlib::Absolutepath] $source = undef,
   $timeout            = undef,
   $type               = undef,
   $user               = 'aem',
@@ -20,14 +20,10 @@ define aem::crx::package (
   $retry_timeout      = undef,
   $stabilization_time = undef,
 ) {
-
-  validate_re($ensure, '^(present|installed|absent|purged)$',
-    "${ensure} is not supported for ensure. Allowed values are: 'present', 'installed', 'absent' or 'purged'.")
-
-  validate_absolute_path($home)
-
-  if $ensure != 'absent' and $ensure != 'purged' {
-    validate_absolute_path($source)
+  if $ensure == 'present' or $ensure == 'installed' {
+    if $source == undef {
+      fail("Source is required when ensure == 'present' or ensure == 'installed'")
+    }
   }
 
   case $type {

@@ -4,38 +4,32 @@
 #
 #
 define aem::instance (
-  $ensure                  = 'present',
-  $context_root            = undef,
-  $debug_port              = undef,
-  $group                   = 'aem',
-  $home                    = undef,
-  $jvm_mem_opts            = '-Xmx1024m',
-  $jvm_opts                = undef,
-  $manage_group            = true,
-  $manage_home             = true,
-  $manage_user             = true,
-  $osgi_configs            = undef,
-  $crx_packages            = undef,
-  $port                    = 4502,
-  $runmodes                = [],
-  $sample_content          = true,
-  $snooze                  = 10,
-  $source                  = undef,
-  $status                  = 'enabled',
-  $timeout                 = 600,
-  $type                    = author,
-  $user                    = 'aem',
-  $version                 = undef,
-  $systemd_service_options = undef,
+  Enum['present', 'absent'] $ensure                  = 'present',
+  Optional[String] $context_root            = undef,
+  Optional[Integer] $debug_port              = undef,
+  String $group                   = 'aem',
+  Stdlib::Absolutepath $home                    = undef,
+  String $jvm_mem_opts            = '-Xmx1024m',
+  String $jvm_opts                = undef,
+  Boolean $manage_group            = true,
+  Boolean $manage_home             = true,
+  Boolean $manage_user             = true,
+  Variant[Array[Hash], Hash] $osgi_configs            = undef,
+  Optional[Array] $crx_packages            = undef,
+  Integer $port                    = 4502,
+  Array $runmodes                = [],
+  Boolean $sample_content          = true,
+  Integer $snooze                  = 10,
+  Stdlib::Absolutepath $source                  = undef,
+  Enum['enabled', 'disabled', 'running', 'unmanaged'] $status = 'enabled',
+  Integer $timeout                 = 600,
+  Enum['author', 'publish', 'standby'] $type = author,
+  String $user                    = 'aem',
+  Optional[Pattern[/^\d+\.\d+(\.\d+)?$/]] $version = undef,
+  Hash $systemd_service_options = undef,
 ) {
 
   anchor { "aem::${name}::begin": }
-
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-
-  if $debug_port {
-    validate_integer($debug_port)
-  }
 
   if !$home {
     case $::kernel {
@@ -46,15 +40,9 @@ define aem::instance (
     $_home = $home
   }
 
-  validate_absolute_path($_home)
-
-  validate_bool($manage_group)
-
   if $manage_group {
     group { $group: ensure => $ensure, }
   }
-
-  validate_bool($manage_user)
 
   if $manage_user {
     user { $user:
@@ -63,41 +51,10 @@ define aem::instance (
     }
   }
 
-  validate_bool($manage_home)
-
   if $osgi_configs {
-    if !is_hash($osgi_configs) and !(is_array($osgi_configs) and is_hash($osgi_configs[0])) {
+    unless $osgi_configs =~ Hash and !($osgi_configs =~ Array and $osgi_configs[0] =~ Hash) {
       fail("Aem::Instance[${name}]: 'osgi_configs' must be either a Hash or an Array of Hashes")
     }
-  }
-
-  if $crx_packages {
-    validate_array($crx_packages)
-  }
-
-  validate_integer($port)
-  validate_array($runmodes)
-
-  validate_bool($sample_content)
-
-  validate_re($status, '^(enabled|disabled|running|unmanaged)$',
-    "${status} is not supported for status. Allowed values are 'enabled', 'disabled', 'running' and 'unmanaged'.")
-
-  validate_integer($snooze)
-  if ($ensure == 'present') {
-    validate_absolute_path($source)
-  }
-
-  validate_integer($timeout)
-
-  validate_re(
-    $type,
-    '^(author|publish|standby)$',
-    "${type} is not supported for type. Allowed values are 'author', 'publish' and 'standby'."
-  )
-
-  if $version {
-    validate_re($version, '^\d+\.\d+(\.\d+)?$', "${version} is not a valid version.")
   }
 
   # ### Manage actions

@@ -1,15 +1,15 @@
 # This class exists soley to ensure that the module is properly defined.
 
 class aem::dispatcher (
-  $ensure             = 'present',
-  $decline_root       = $::aem::dispatcher::params::decline_root,
+  Enum['present', 'absent'] $ensure             = 'present',
+  Variant[Enum['on', 'off'], Integer[0, 1]] $decline_root       = $::aem::dispatcher::params::decline_root,
   $dispatcher_name    = undef,
   $group              = $::aem::dispatcher::params::group,
   $log_file           = $::aem::dispatcher::params::log_file,
-  $log_level          = $::aem::dispatcher::params::log_level,
-  $module_file        = undef,
+  Variant[Enum['error', 'warn', 'info', 'debug', 'trace'], Integer[0, 4]] $log_level          = $::aem::dispatcher::params::log_level,
+  Stdlib::Absolutepath $module_file = undef,
   $pass_error         = $::aem::dispatcher::params::pass_error,
-  $use_processed_url  = $::aem::dispatcher::params::use_processed_url,
+  Variant[Enum['on', 'off'], Integer[0, 1]] $use_processed_url  = $::aem::dispatcher::params::use_processed_url,
   $user               = $::aem::dispatcher::params::user
 ) inherits ::aem::dispatcher::params {
 
@@ -20,30 +20,7 @@ class aem::dispatcher (
 
   anchor { 'aem::dispatcher::begin': }
 
-  validate_re($ensure, '^(present|absent)$', "${ensure} is not supported for ensure. Allowed values are 'present' and 'absent'.")
-
-  if is_integer($decline_root) {
-    validate_integer($decline_root, 1, 0)
-  } else {
-    validate_re($decline_root, '^(on|off)$', "${decline_root} is not supported for decline_root. Allowed values are 'on' and 'off'.")
-  }
-
-  if is_integer($log_level) {
-    validate_integer($log_level, 4, 0)
-  } else {
-    validate_re($log_level, '^(error|warn|info|debug|trace)$',
-      "${log_level} is not supported for log_level. Allowed values are 'error', 'warn', 'info', 'debug' and 'trace'.")
-  }
-
-  validate_absolute_path($module_file)
   $_mod_filename = basename($module_file)
-
-  if is_integer($use_processed_url) {
-    validate_integer($use_processed_url, 1, 0)
-  } else {
-    validate_re($use_processed_url, '^(on|off)$',
-      "${use_processed_url} is not supported for use_processed_url. Allowed values are 'on' and 'off'.")
-  }
 
   $config_file = $::aem::dispatcher::params::config_file
 
