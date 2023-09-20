@@ -53,7 +53,7 @@ define aem::agent::replication(
   Optional[Boolean] $trigger_onoff_time    = undef,
   String $username
 ) {
-  if $name =~ /^[A-Za-z0-9\-_]+$/ {
+  if $name !~ /^[A-Za-z0-9\-_]+$/ {
     fail("Name [${name}] must contain only letters, numbers, underscores, or hyphens.")
   }
 
