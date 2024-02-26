@@ -29,7 +29,7 @@ define aem::dispatcher::farm(
   Variant[Optional[Array[Hash]], Optional[Hash]]  $statistics          = undef,
   Variant[Optional[Array[String]], Optional[String]] $sticky_connections  = undef,
   Optional[Integer] $unavailable_penalty = undef,
-  Optional[Hash[String, Variant[String, Integer, Boolean]]] $vanity_urls  = undef,
+  Optional[Hash[String, Variant[String, Integer]]] $vanity_urls         = undef,
   Variant[Optional[Array[String]], Optional[String]] $virtualhosts        = $::aem::dispatcher::params::virtualhosts
 ) {
 
