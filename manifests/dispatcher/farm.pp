@@ -124,7 +124,7 @@ define aem::dispatcher::farm(
       }
     }
   }
-  
+
   if $statistics {
     if $statistics =~ Array[Hash] {
       $_statistics = $statistics

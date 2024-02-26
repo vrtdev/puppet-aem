@@ -89,6 +89,9 @@
   /vanity_urls {
     /url "/libs/granite/dispatcher/content/vanityUrls.html"
     /file "<%= @vanity_urls['file'] -%>"
+    <%- if @vanity_urls.key?('load_on_startup') -%>
+    /loadOnStartup <%= @vanity_urls['load_on_startup'] -%>
+    <%- end -%>
     /delay "<%= @vanity_urls['delay'] -%>"
   }
   <%- end -%>
