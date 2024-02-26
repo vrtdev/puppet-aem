@@ -33,7 +33,7 @@
 
   /renders {
   <%- @_renders.each_with_index do |renderer, idx| -%>
-    /renderer<%= idx -%> { 
+    /renderer<%= idx -%> {
       /hostname "<%= renderer['hostname'] -%>"
       /port "<%= renderer['port'] -%>"
       <%- if renderer['timeout'] -%>
@@ -89,7 +89,9 @@
   /vanity_urls {
     /url "/libs/granite/dispatcher/content/vanityUrls.html"
     /file "<%= @vanity_urls['file'] -%>"
+    <%- if @vanity_urls.key?('load_on_startup') && ! @vanity_urls['load_on_startup'] -%>
     /loadOnStartup 0
+    <%- end -%>
     /delay "<%= @vanity_urls['delay'] -%>"
   }
   <%- end -%>
