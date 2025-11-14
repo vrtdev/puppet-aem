@@ -4,19 +4,19 @@
 #
 class aem::dispatcher::params {
 
-  if $::osfamily == 'RedHat' or $::operatingsystem == 'amazon' {
+  if $facts['os']['family'] == 'RedHat' or $facts['os']['name'] == 'amazon' {
 
     $mod_path = "${::apache::httpd_dir}/${::apache::lib_path}"
     $farm_path = $::apache::mod_dir
 
-  } elsif $::osfamily == 'Debian' {
+  } elsif $facts['os']['family'] == 'Debian' {
 
     $mod_path = $::apache::lib_path
     $farm_path = $::apache::mod_enable_dir
 
   } else {
 
-    fail("Class['aem::dispatcher::params']: Unsupported osfamily: ${::osfamily}")
+    fail("Class['aem::dispatcher::params']: Unsupported osfamily: ${facts['os']['family']}")
 
   }
 

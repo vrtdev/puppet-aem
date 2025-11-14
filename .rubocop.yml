@@ -1,27 +1,33 @@
 inherit_from: .rubocop_todo.yml
 
+plugins:
+  - rubocop-rake
+  - rubocop-rspec
+
 AllCops:
+  NewCops: enable
   Exclude:
     - 'pkg/**/*'
     - 'vendor/**/*'
-  TargetRubyVersion: 2.2
+    - 'spec/**/*'
+  TargetRubyVersion: 4.3
 
 Metrics/BlockLength:
   Exclude:
     - 'spec/defines/service_spec.rb'
-  ExcludedMethods:
-    - 'describe'
-    - 'context'
-    - 'it'
-    - 'shared_examples'
-    - 'newtype'
-    - 'provide'
-    - 'newproperty'
-    - 'let'
-    - 'shell'
-    - 'CentOS'
+  # ExcludedMethods:
+  #   - 'describe'
+  #   - 'context'
+  #   - 'it'
+  #   - 'shared_examples'
+  #   - 'newtype'
+  #   - 'provide'
+  #   - 'newproperty'
+  #   - 'let'
+  #   - 'shell'
+  #   - 'CentOS'
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:

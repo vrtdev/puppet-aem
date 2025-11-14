@@ -2,7 +2,12 @@
 #
 # Configure a Replication Agent
 define aem::agent::replication(
-
+  String $username,
+  String $password,
+  String $resource_type,
+  String $runmode,
+  String $serialize_type,
+  String $template,
   $agent_user            = undef,
   Optional[Boolean] $batch_enabled         = undef,
   Optional[Integer] $batch_max_wait        = undef,
@@ -14,7 +19,6 @@ define aem::agent::replication(
   Stdlib::Absolutepath $home = undef,
   Enum['debug', 'info', 'error'] $log_level             = 'info',
   Optional[Array] $mixin_types           = undef,
-  String $password,
   Optional[Boolean] $protocol_close_conn   = undef,
   Optional[Integer] $protocol_conn_timeout = undef,
   Optional[Array] $protocol_http_headers = undef,
@@ -28,14 +32,10 @@ define aem::agent::replication(
   $proxy_password        = undef,
   Optional[Integer] $proxy_port            = undef,
   $proxy_user            = undef,
-  String $resource_type,
   Optional[Integer] $retry_delay           = undef,
   Optional[Boolean] $reverse               = undef,
-  String $runmode,
-  String $serialize_type,
   Optional[Stdlib::Absolutepath] $static_directory = undef,
   $static_definition     = undef,
-  String $template,
   Optional[Integer] $timeout               = undef,
   Optional[Boolean] $trans_allow_exp_cert  = undef,
   $trans_ntlm_domain     = undef,
@@ -51,7 +51,6 @@ define aem::agent::replication(
   Optional[Boolean] $trigger_on_mod        = undef,
   Optional[Boolean] $trigger_on_receive    = undef,
   Optional[Boolean] $trigger_onoff_time    = undef,
-  String $username
 ) {
   if $name !~ /^[A-Za-z0-9\-_]+$/ {
     fail("Name [${name}] must contain only letters, numbers, underscores, or hyphens.")

@@ -1,24 +1,29 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-facterversion = ENV['FACTER_GEM_VERSION']
-puppetversion = ENV['PUPPET_VERSION']
+facterversion = ENV.fetch('FACTER_GEM_VERSION', nil)
+puppetversion = ENV.fetch('PUPPET_VERSION', nil)
 
 group :development, :tests do
+  gem 'benchmark',                  require: false
   gem 'codeclimate-test-reporter',  require: false
+  gem 'ostruct',                    require: false
   gem 'metadata-json-lint',         require: false
   gem 'puppetlabs_spec_helper',     require: false
   gem 'rake',                       require: false
   gem 'rspec',                      require: false
-  gem 'rspec-puppet', '<2.6',       require: false
+  gem 'rspec-puppet',               require: false
   gem 'simplecov',                  require: false
   gem 'webmock',                    require: false
-  # Until https://github.com/hirakiuc/tinybucket/issues/113 is fixed
-  gem 'rainbow', '<2.2', require: false
+  gem 'syslog',                     require: false
+  gem 'rainbow',                    require: false
 end
 
 group :linting do
   gem 'puppet-lint',                require: false
   gem 'rubocop',                    require: false
+  gem 'rubocop-performance',        require: false
+  gem 'rubocop-rspec',              require: false
+  gem 'rubocop-rake',               require: false
 end
 
 group :system_tests do
