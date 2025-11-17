@@ -32,9 +32,9 @@ define aem::instance (
   anchor { "aem::${name}::begin": }
 
   if !$home {
-    case $::kernel {
+    case $facts['kernel'] {
       'Linux' : { $_home = '/opt/aem' }
-      default : { fail("'${module_name}' has no default 'home' value for '${::kernel}'") }
+      default : { fail("'${module_name}' has no default 'home' value for '${facts['kernel']}'") }
     }
   } else {
     $_home = $home

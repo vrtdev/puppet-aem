@@ -17,10 +17,10 @@ define aem::service (
     fail('Home directory must be specified.')
   }
 
-  case $::operatingsystem {
+  case $facts['os']['name'] {
     'CentOS', 'Fedora', 'RedHat' : {
 
-      if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+      if versioncmp($facts['os']['release']['major'], '7') >= 0 {
         $provider      = 'systemd'
       } else {
         $provider      = 'init'
@@ -31,7 +31,7 @@ define aem::service (
     }
     'Debian': {
 
-      if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+      if versioncmp($facts['os']['release']['major'], '8') >= 0 {
         $provider      = 'systemd'
       } else {
         $provider      = 'init'
@@ -39,14 +39,14 @@ define aem::service (
     }
     'Ubuntu': {
 
-      if versioncmp($::operatingsystemmajrelease, '15') >= 0 {
+      if versioncmp($facts['os']['release']['major'], '15') >= 0 {
         $provider      = 'systemd'
       } else {
         $provider      = 'init'
       }
     }
     default: {
-      fail("'${module_name}' provides no service parameters for '${::operatingsystem}'")
+      fail("'${module_name}' provides no service parameters for '${facts['os']['name']}'")
     }
   }
 

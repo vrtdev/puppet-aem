@@ -1,5 +1,7 @@
 # This class exists soley to ensure that the module is properly defined.
-
+#
+# AEM Dispatcher
+#
 class aem::dispatcher (
   Enum['present', 'absent'] $ensure             = 'present',
   Variant[Enum['on', 'off'], Integer[0, 1]] $decline_root       = $::aem::dispatcher::params::decline_root,

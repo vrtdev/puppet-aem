@@ -1,7 +1,7 @@
 # Default License Example
 
 aem::instance { 'aem' :
-  source         => '/path/to/aem-quickstart.jar',
+  source => '/path/to/aem-quickstart.jar',
 }
 
 aem::license { 'aem' :
